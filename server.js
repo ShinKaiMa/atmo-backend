@@ -45,26 +45,43 @@ app.post("/api/login", (req, res) => {
     console.log("email: " + email);
     console.log("password: " + password);
 
-    User.findOne({ email }, function (err, user) {
-        if (err) return console.error(err);
+    // User.findOne({ email }, function (err, user) {
+    //     if (err){
+    //         console.error(err)
+    //         throw err;
+    //     } 
 
-        if(!user){
-            res.json({Error : "Authentication failed."})
-        }else{
-            console.log(" result "+user.isValidPassword(password))
-            if(user.isValidPassword(password)){
-                res.json({Success : "Success"})
-            }
-        }
-        // res.json({ result: Users[0].isValidPassword(password) })
+    //     if (!user) {
+    //         res.json({ Error: "Authentication failed." })
+    //     } else {
+    //         user.isValidPassword(password,res)
+    //     }
+    //     // res.json({ result: Users[0].isValidPassword(password) })
+    // });
+
+    user = new User({
+        email: req.body.email,
+        password: req.body.password
     });
+
+    user.isValid().then((isValid) => {
+        if (isValid) {
+            res.json({ Message: 'success' })
+        } else {
+            res.json({ Message: 'fail' })
+        }
+    });
+    // User.getUserByEmail(email).then((user) => console.log('get user: ' + user)).catch((err)=>console.log('err: ' + err))
+
+    // function isValid
+
 })
 
 
 app.listen(5000, () => {
     console.log('running at port 5000');
-    // var token = jwt.sign({ foo: 'bar' }, config.privateKey, { algorithm: 'RS256' });
-    // console.log(token);
+    var token = jwt.sign({ foo: 'bar' }, config.privateKey, { algorithm: 'RS256' });
+    console.log(token);
 
     // jwt.verify(token, config.publicKey, { algorithms: ['RS256'] }, function (err, payload) {
     //     // if token alg != RS256,  err == invalid signature
