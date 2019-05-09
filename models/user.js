@@ -55,7 +55,7 @@ userSchema.statics._getUserByEmail = function (email) {
 
 userSchema.statics._signJWT = function (user) {
     return new Promise((resolve, reject) => {
-            jwt.sign({user}, config.privateKey, { expiresIn: '30s',algorithm: 'RS256' }, function (err, token) {
+            jwt.sign({user}, config.privateKey, { expiresIn: config.keepLoggedInDay,algorithm: 'RS256' }, function (err, token) {
             if (err) reject('Exception encountered when sign jwt: ' + err);
             resolve(token);
         });
@@ -86,7 +86,6 @@ User.prototype.verifyUser = async function () {
                 delete user['password'];
                 delete user['_id'];
                 delete user['__v'];
-                console.log(user)
                 var token = await User._signJWT(user);
                 return {
                     Message: "login success",
