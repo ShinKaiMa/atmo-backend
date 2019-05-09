@@ -6,5 +6,6 @@ module.exports = {
     'privateKey': privateKey,
     'publicKey': publicKey,
     'database': 'mongodb://localhost:27017/test',
-    'saltRounds':12
+    'saltRounds': 12,
+    'keepLoggedInDay': "7 days"
 };
