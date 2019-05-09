@@ -64,7 +64,7 @@ userSchema.statics._signJWT = function (user) {
 
 var User = mongoose.model('User', userSchema);
 
-User.prototype.verifyUser = async function () {
+User.prototype.verify = async function () {
     try {
         var inputPassword = this.password;
         var user = await User._getUserByEmail(this.email);
