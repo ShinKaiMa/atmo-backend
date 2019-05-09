@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken')
 const config = require("../config");
 
 var userSchema = new Schema({
-    email: { type: [String], index: true },
-    password: { type: [String], index: true },
-    auth: { type: [Boolean], index: true },
-    admin: { type: [Boolean], index: true }
+    email: { type: String, index: true },
+    password: { type: String, index: true },
+    auth: { type: Boolean, index: true },
+    admin: { type: Boolean, index: true }
 });
 
 
@@ -73,6 +73,7 @@ User.prototype.verifyUser = async function () {
                 Message: "invalid",
             }
         } else {
+            
             var isValid = await user._comparePassword(inputPassword);
             if (!isValid) {
                 return {
@@ -80,6 +81,12 @@ User.prototype.verifyUser = async function () {
                 }
             }
             else if (isValid && user.auth) {
+                // trans mongoose doc to normal object
+                user = user.toObject();
+                delete user['password'];
+                delete user['_id'];
+                delete user['__v'];
+                console.log(user)
                 var token = await User._signJWT(user);
                 return {
                     Message: "login success",
@@ -87,7 +94,11 @@ User.prototype.verifyUser = async function () {
                 }
             }
             else if (isValid && !user.auth) {
+                // trans mongoose doc to normal object
+                user = user.toObject();
                 delete user['password'];
+                delete user['_id'];
+                delete user['__v'];
                 var token = await User._signJWT(user);
                 return {
                     Message: "account has not been authorized",
