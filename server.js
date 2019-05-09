@@ -11,7 +11,7 @@ var User = require('./models/user');
 mongoose.set('useCreateIndex', true);// use createIndex() instead of ensureIndex() in mongodb
 mongoose.connect(config.database, { useNewUrlParser: true }); // connect to database
 
-// app.use(express.static(path.join(__dirname, 'dist'))) 
+app.use(express.static(path.join(__dirname, 'dist'))) 
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
