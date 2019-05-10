@@ -3,22 +3,23 @@ const path = require('path')
 const express = require('express');
 var bodyParser = require('body-parser');
 const config = require("./config");
-const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 var app = express();
 var history = require('connect-history-api-fallback');
 var DBinitialize = require("./libs/utils/DBInitialize");
+var logger = require("./libs/utils/logger");
 var User = require('./models/user');
+
 
 // use createIndex() instead of ensureIndex() in mongodb
 mongoose.set('useCreateIndex', true);
 mongoose.connect(config.database, { useNewUrlParser: true })
     .then(() => {
-        console.log(`Connected to ${config.database} successfully`);
+        logger.info(`Connected to ${config.database} successfully`);
         DBinitialize();
     })
     .catch((error) => {
-        console.log(`Can not connect to ${config.database}, reason: ` + error);
+        logger.error(`Can not connect to ${config.database}, reason: ` + error);
         process.exit(1);
     });
 
@@ -28,19 +29,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.post("/api/login", (req, res) => {
-    console.log('get login req: ' + JSON.stringify(req.body));
+    logger.info('get login reqeust -  email:' + JSON.stringify(req.body.email));
     var user = new User({
         email: req.body.email,
         password: req.body.password
     });
     user.verify().then((result) => {
         res.json(result)
-    }).catch((error)=>{
-        res.status(500).json({Error : error});
+    }).catch((error) => {
+        res.status(500).json({ Error: error });
     })
-    ;
+        ;
 })
 
 app.listen(5000, () => {
-    console.log('running at port 5000');
+    logger.info('running at port 5000');
 })
