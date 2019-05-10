@@ -1,3 +1,4 @@
+'use strict'
 const path = require('path')
 const express = require('express');
 var bodyParser = require('body-parser');
@@ -8,8 +9,6 @@ var app = express();
 var history = require('connect-history-api-fallback');
 var DBinitialize = require("./libs/utils/DBInitialize");
 var User = require('./models/user');
-
-'use strict'
 
 // use createIndex() instead of ensureIndex() in mongodb
 mongoose.set('useCreateIndex', true);
@@ -30,7 +29,7 @@ app.use(bodyParser.json());
 
 app.post("/api/login", (req, res) => {
     console.log('get login req: ' + JSON.stringify(req.body));
-    user = new User({
+    var user = new User({
         email: req.body.email,
         password: req.body.password
     });
