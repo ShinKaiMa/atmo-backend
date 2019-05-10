@@ -35,7 +35,10 @@ app.post("/api/login", (req, res) => {
     });
     user.verify().then((result) => {
         res.json(result)
-    });
+    }).catch((error)=>{
+        res.status(500).json({Error : error});
+    })
+    ;
 })
 
 app.listen(5000, () => {

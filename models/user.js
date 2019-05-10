@@ -86,9 +86,11 @@ User.prototype.verify = async function () {
             }
         }
     }
-    catch (err) {
-        console.log('err: ' + err)
-        throw err;
+    catch (error) {
+        console.log('error: ' + error)
+        return {
+            Error: error
+        };
     }
 }
 
