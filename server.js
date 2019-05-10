@@ -1,17 +1,26 @@
-const path = require('path') 
+const path = require('path')
 const express = require('express');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 const config = require("./config");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 var app = express();
+var DBinitialize = require("./libs/utils/DBInitialize");
 
 var User = require('./models/user');
 
 mongoose.set('useCreateIndex', true);// use createIndex() instead of ensureIndex() in mongodb
-mongoose.connect(config.database, { useNewUrlParser: true }); // connect to database
+mongoose.connect(config.database, { useNewUrlParser: true })
+    .then(() => console.log(`Connected to ${config.database} successfully`))
+    .catch((error) => {
+        console.log(`Can not connect to ${config.database}, reason: ` + error);
+        process.exit(1);
+    });
 
-app.use(express.static(path.join(__dirname, 'dist'))) 
+DBinitialize();
+
+
+app.use(express.static(path.join(__dirname, 'dist')))
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())

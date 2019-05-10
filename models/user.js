@@ -12,32 +12,12 @@ var userSchema = new Schema({
 });
 
 
-
-
-userSchema.methods.isValidPassword = async function isValidPassword(password, res) {
-    var result = await bcrypt.compare(password, '' + this.password);
-    console.log('in fn result: ' + result);
-    if (result) {
-        res.json({ Success: "Success" });
-    } else {
-        res.json({ Error: "Failed" });
-    }
-    return result;
-}
-
 userSchema.methods._comparePassword = function (inputPassword) {
     return new Promise((resolve, reject) => {
         bcrypt.compare('' + inputPassword, '' + this.password, function (err, isValidPassword) {
             if (err) reject(err);
             resolve(isValidPassword)
         });
-    })
-}
-
-userSchema.methods._signJWT = function () {
-    return new Promise((resolve, reject) => {
-
-
     })
 }
 
