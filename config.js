@@ -1,6 +1,6 @@
 const fs = require('fs');
-const privateKey = fs.readFileSync("./key/atmo.private.key");
-const publicKey = fs.readFileSync("./key/atmo.public.key");
+const privateKey = fs.readFileSync("./key/atmo.key");
+const publicKey = fs.readFileSync("./key/atmo.key.pub");
 const adminList = JSON.parse(fs.readFileSync("./key/admin.json"));
 
 module.exports = {
