@@ -5,6 +5,7 @@ const config = require("./config");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 var app = express();
+var history = require('connect-history-api-fallback');
 var DBinitialize = require("./libs/utils/DBInitialize");
 var User = require('./models/user');
 
@@ -22,9 +23,10 @@ mongoose.connect(config.database, { useNewUrlParser: true })
         process.exit(1);
     });
 
-app.use(express.static(path.join(__dirname, 'dist')))
+app.use(history());
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.post("/api/login", (req, res) => {
     console.log('get login req: ' + JSON.stringify(req.body));
