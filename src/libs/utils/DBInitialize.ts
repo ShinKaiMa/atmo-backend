@@ -1,6 +1,6 @@
 import {config} from '../../config';
 import {logger} from '../../libs/utils/logger';
-import {User} from '../../models/user';
+import {User} from '../../models/user.model';
 const bcrypt = require('bcrypt');
 
 // initialize admin account in mongoDB
@@ -11,9 +11,9 @@ export const DBinitialize = async function() {
     var adminList = config.adminList.admins;
     try {
         for (var admin of adminList) {
-            var user = await User._getUserByEmail(admin.email);
+            let user = await User.findOne({ email: admin.email }).exec();
             if (user) {
-                logger.info(`${user.email} already existed in DB, skip it.`);
+                logger.debug(`${user.email} already existed in DB, skip it.`);
                 continue;
             } else {
                 var hash = await bcrypt.hash(admin.password, config.saltRounds);
