@@ -1,14 +1,14 @@
 'use strict'
+import * as history from 'connect-history-api-fallback';
+import {config} from './config';
+import {logger} from './libs/utils/logger';
+import {DBinitialize} from './libs/utils/DBInitialize';
+import {User} from './models/user';
 const path = require('path')
 const express = require('express');
 var bodyParser = require('body-parser');
-const config = require("./config");
 const mongoose = require("mongoose");
 var app = express();
-var history = require('connect-history-api-fallback');
-var DBinitialize = require("./libs/utils/DBInitialize");
-var logger = require("./libs/utils/logger");
-var User = require('./models/user');
 
 
 // use createIndex() instead of ensureIndex() in mongodb
@@ -42,6 +42,6 @@ app.post("/api/login", (req, res) => {
         ;
 })
 
-app.listen(5000, () => {
-    logger.info('running at port 5000');
+app.listen(80, () => {
+    logger.info('running at port 80');
 })

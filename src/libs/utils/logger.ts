@@ -1,4 +1,4 @@
-const log4js = require('log4js');
+import * as log4js from'log4js';
 
 log4js.configure({
     appenders: {
@@ -9,7 +9,7 @@ log4js.configure({
             }
         },
         fileAppenders: {
-            type: 'datefile', filename: './logs/atmo-service.log', pattern: '.yyyy-MM-dd-hh', compress: true, layout: {
+            type: 'dateFile', filename: './logs/atmo-service.log', pattern: '.yyyy-MM-dd-hh', compress: true, layout: {
                 type: 'pattern',
                 pattern: '[%d{yyyy-MM-dd hh:mm:ss.SSS}] [%p] %c - %m',
             }
@@ -21,4 +21,4 @@ log4js.configure({
 });
 const logger = log4js.getLogger('ATMO');
 
-module.exports = logger;
+export {logger};

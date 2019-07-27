@@ -1,12 +1,12 @@
-const config = require("../../config");
-var User = require('../../models/user');
+import {config} from '../../config';
+import {logger} from '../../libs/utils/logger';
+import {User} from '../../models/user';
 const bcrypt = require('bcrypt');
-var logger = require("./logger");
 
 // initialize admin account in mongoDB
 
-var isComplete = true;
-async function DBinitialize() {
+export const DBinitialize = async function() {
+    var isComplete = true;
     logger.info('Start adding initial admin to DB');
     var adminList = config.adminList.admins;
     try {
@@ -33,5 +33,3 @@ async function DBinitialize() {
         if(isComplete) logger.info('DB has initialized!');
     }
 }
-
-module.exports = DBinitialize;

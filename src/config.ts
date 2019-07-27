@@ -3,7 +3,7 @@ const privateKey = fs.readFileSync("./key/atmo.key");
 const publicKey = fs.readFileSync("./key/atmo.key.pub");
 const adminList = JSON.parse(fs.readFileSync("./key/admin.json"));
 
-module.exports = {
+let config = {
     'privateKey': privateKey,
     'publicKey': publicKey,
     'adminList': adminList,
@@ -11,3 +11,5 @@ module.exports = {
     'saltRounds': 12,
     'keepLoggedInDay': "7 days"
 };
+
+export {config}

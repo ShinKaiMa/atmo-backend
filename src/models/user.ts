@@ -1,9 +1,9 @@
+import {logger} from '../libs/utils/logger';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const config = require("../config");
-var logger = require("../libs/utils/logger");
 
 var userSchema = new Schema({
     email: { type: String, index: true },
@@ -95,4 +95,4 @@ User.prototype.verify = async function () {
     }
 }
 
-module.exports = User;
+export {User};
