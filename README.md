@@ -47,9 +47,5 @@ openssl rsa -in atmo.key -pubout -outform PEM -out atmo.key.pub
 
 6.Start server
 ```
-npm server.js
-```
-or starting server by nodemon
-```
-nodemon
+npm start
 ```

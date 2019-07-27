@@ -18,5 +18,8 @@
   },
   "devDependencies": {
     "nodemon": "^1.19.0"
+  },
+  "scripts": {
+    "start": "tsc && node ./dist/server.js"
   }
 }
