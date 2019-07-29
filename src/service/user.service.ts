@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { logger } from '../libs/utils/logger';
 
-export class userService {
+export class UserService {
     public static async verify(inputEmail: string, inputPassword: string) {
         try {
             let user = await User.findOne({ email: inputEmail }).exec();
