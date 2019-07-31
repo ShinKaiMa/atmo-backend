@@ -13,7 +13,7 @@ export class UserService {
                     Message: "invalid",
                 }
             } else {
-                let isValid = await this.comparePassword(user.password, inputPassword);
+                let isValid = await UserService.comparePassword(user.password, inputPassword);
                 if (!isValid) {
                     return {
                         Message: "invalid",
