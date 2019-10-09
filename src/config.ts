@@ -1,15 +1,24 @@
-const fs = require('fs');
-const privateKey = fs.readFileSync("./key/atmo.key");
-const publicKey = fs.readFileSync("./key/atmo.key.pub");
-const adminList = JSON.parse(fs.readFileSync("./key/admin.json"));
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+dotenv.config();
+
+const privateKey = fs.readFileSync("./src/key/atmo.key");
+const publicKey = fs.readFileSync("./src/key/atmo.key.pub");
+const adminList = JSON.parse(fs.readFileSync("./src/key/admin.json").toString());
+
+let corsOrigin: string = "";
+corsOrigin = process.env.NODE_ENV === 'develop' ? 'http://localhost:3000' : 'https://atmo.io'
+let port = process.env.PORT;
 
 let config = {
     'privateKey': privateKey,
     'publicKey': publicKey,
     'adminList': adminList,
-    'database': 'mongodb://localhost:27017/test',
+    'database': 'mongodb://localhost:27017/atmo_dev',
     'saltRounds': 12,
-    'keepLoggedInDay': "7 days"
+    'keepLoggedInDay': "7 days",
+    corsOrigin,
+    port
 };
 
-export {config}
+export { config }

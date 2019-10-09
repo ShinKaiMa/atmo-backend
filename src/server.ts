@@ -5,9 +5,10 @@ import * as bodyParser from 'body-parser';
 import { config } from './config';
 import { logger } from './libs/utils/logger';
 import { DBinitialize } from './libs/utils/DBInitialize';
-import {userController} from "./controller/user.controller"
+import { userController } from "./controller/user.controller"
 import express = require('express');
 import mongoose = require('mongoose');
+import * as cors from 'cors';
 
 let app = express();
 
@@ -23,13 +24,16 @@ mongoose.connect(config.database, { useNewUrlParser: true })
         process.exit(1);
     });
 
+app.use(cors({
+    origin: config.corsOrigin,
+    optionsSuccessStatus: 200
+}));
 app.use(history());
-app.use(express.static(path.join(__dirname, 'dist')));
+//app.use(express.static(path.join(__dirname, 'dist')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/",userController);
-
-app.listen(80, () => {
-    logger.info('running at port 80');
+app.use("/", userController);
+app.listen(config.port, () => {
+    logger.info(`running at port ${config.port}, CORS-ORIGIN: ${config.corsOrigin}`);
 })
