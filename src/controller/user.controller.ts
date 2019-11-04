@@ -6,7 +6,10 @@ let userController = express.Router();
 
 userController.post("/api/login", (req, res) => {
     logger.info('get login reqeust -  email:' + JSON.stringify(req.body.email));
-    UserService.verify(req.body.email, req.body.password).then((response) => res.json(response));
+    UserService.verify(req.body.email, req.body.password).then((response) => res.json(response)).catch( err => {
+        logger.error(err);
+        res.status(503).send({ Error: 'Can not verify.' });
+    });
 });
 
 export { userController }

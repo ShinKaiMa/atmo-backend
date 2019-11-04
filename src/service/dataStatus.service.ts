@@ -18,7 +18,7 @@ export class DataStatusService {
                 { $group: { _id: null, area: { $addToSet: "$area" }, startDate: { $addToSet: "$startDate" } } }
             ]);
             console.log(`result: ${JSON.stringify(result)}`);
-            if (result.length > 0) {
+            if (result && result.length > 0) {
                 let modelViewSchema  = result[0];
                 delete modelViewSchema['_id'];
 
@@ -28,7 +28,7 @@ export class DataStatusService {
                 modelViewSchema.area = areas;
 
                 let startDates = modelViewSchema.startDate.map( dateString => {
-                    return dateformat(new Date(dateString),"UTC:yyyy/mm/dd HH:MM:ss Z");
+                    return dateformat(new Date(dateString),"UTC:yyyy/mm/dd HHMMZ");
                 });
                 modelViewSchema.startDate = startDates;
 
@@ -36,7 +36,7 @@ export class DataStatusService {
             }
         } catch (err) {
             logger.error(err);
+            return null;
         }
-        return null;
     }
 }
