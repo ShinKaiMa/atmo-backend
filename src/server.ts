@@ -6,6 +6,7 @@ import { config } from './config';
 import { logger } from './libs/utils/logger';
 import { DBinitialize } from './libs/utils/DBInitialize';
 import { userController } from "./controller/user.controller"
+import { dataStatusController } from "./controller/dataStatus.controller"
 import express = require('express');
 import mongoose = require('mongoose');
 import * as cors from 'cors';
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/", userController);
+app.use("/", dataStatusController);
 app.listen(config.port, () => {
     logger.info(`running at port ${config.port}, CORS-ORIGIN: ${config.corsOrigin}`);
 })

@@ -1,9 +1,11 @@
 import {Document, Schema, Model, model} from "mongoose";
 
 export interface IDataStatus extends Document {
-  dataType: string;
+  source: string;
+  fileType: string;
   area:string;
-  contentType:string;
+  dataType:string;
+  detailType:string;
   path: string;
   status:string;
   byte:number;
@@ -15,9 +17,11 @@ export interface IDataStatus extends Document {
 }
 
 let DataStatusSchema: Schema = new Schema({
-  dataType: { type: String, required: true , index: true},
-  area:{ type: String, required: true , index: true},
-  contentType:{ type: String, required: true , index: true},
+  source:{ type: String, required: true , index: true }, //CWB WRF 3KM, GFS, ECMWF
+  fileType: { type: String, required: true , index: true}, // IMG, GRB
+  area:{ type: String, required: true , index: true}, // East Asia, TW
+  dataType:{ type: String, required: true , index: true}, //Precipitation,Wind,Temperature
+  detailType:{ type: String , index: true}, // 850hPa Wind & Precip
   path: { type: String, required: true , index: true},
   status: {type: String, required: true , index: true},
   byte: {type: Number, required: true , index: true},
@@ -29,8 +33,8 @@ let DataStatusSchema: Schema = new Schema({
 },{collection: 'DataStatus'});
 
 DataStatusSchema.pre<IDataStatus>("save", function (next) {
-  let now = new Date();
   if (!this.timeStamp) {
+    let now = new Date();
     this.timeStamp = now;
   }
   next();

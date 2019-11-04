@@ -14,7 +14,7 @@ let config = {
     'privateKey': privateKey,
     'publicKey': publicKey,
     'adminList': adminList,
-    'database': 'mongodb://localhost:27017/atmo_dev',
+    'database': 'mongodb://localhost:27017/test',
     'saltRounds': 12,
     'keepLoggedInDay': "7 days",
     corsOrigin,
