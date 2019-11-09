@@ -18,10 +18,10 @@ db.once('open', async function () {
   //   { $group: { _id: null, area: { $addToSet: "$area" }, startDate: { $addToSet: "$startDate" } } }
   // ]);
 
-  let result: IDataStatus[] = await DataStatus.aggregate([
-    { $match: { fileType: 'IMG', startDate: { $gte: OneWeekAgo, $lte: now }, source: 'CWB WRF 3KM' } },
+  let result:any[] = await DataStatus.aggregate([
+    { $match: { fileType: 'IMG', startDate: { $gte: OneWeekAgo, $lte: now }, source:"CWB WRF 3KM"  } },
     { $group: { _id: null, area: { $addToSet: "$area" }, startDate: { $addToSet: "$startDate" } } }
-  ]);
+]);
 
   console.log(result)
 })
