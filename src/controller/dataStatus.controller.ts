@@ -11,7 +11,7 @@ dataStatusController.post("/api/modelView/schema", (req, res) => {
         return;
     };
 
-    DataStatusService.getModelViewSchemaByModelName(req.body.modelName).then(modelViewSchema => {
+    DataStatusService.getModelViewSchemaByModelName(req.body.modelName, req.body.area).then(modelViewSchema => {
         if (!modelViewSchema) {
             res.status(403).send({ Error: 'Can not get model view schema.' });
             return;
