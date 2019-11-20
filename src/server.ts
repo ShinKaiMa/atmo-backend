@@ -10,6 +10,7 @@ import { dataStatusController } from "./controller/dataStatus.controller"
 import express = require('express');
 import mongoose = require('mongoose');
 import * as cors from 'cors';
+import * as helmet from 'helmet';
 
 let app = express();
 
@@ -33,6 +34,7 @@ app.use(history());
 //app.use(express.static(path.join(__dirname, 'dist')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(helmet());
 
 app.use("/", userController);
 app.use("/", dataStatusController);
