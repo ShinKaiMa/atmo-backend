@@ -24,12 +24,12 @@ dataStatusController.post("/api/modelView/schema", (req, res) => {
 
 dataStatusController.post("/api/modelView/area", (req, res) => {
     logger.debug('get /api/modelView/area - reqeust body :' + JSON.stringify(req.body));
-    if (!req.body.modelName) {
+    if (!req.body.model) {
         res.status(403).send({ Error: 'Invalid Params' });
         return;
     };
 
-    DataStatusService.getAreaByModel(req.body.modelName).then(areas => {
+    DataStatusService.getAreaByModel(req.body.model).then(areas => {
         if (!areas) {
             res.status(403).send({ Error: 'Can not get areas (empty).' });
             return;
