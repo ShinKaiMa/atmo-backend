@@ -27,7 +27,7 @@ export class DataStatusService {
                 let modelViewSchema = result[0];
                 delete modelViewSchema['_id'];
 
-                modelViewSchema.area =  area ;
+                modelViewSchema.area = area;
 
                 // modelViewSchema.startDate = modelViewSchema.startDate.map(dateString => {
                 //     return dateformat(new Date(dateString), "UTC:yyyy/mm/dd HHMMZ");
@@ -73,7 +73,7 @@ export class DataStatusService {
 
 
     public static async getAreaByModel(model: string) {
-        try{
+        try {
             let now = new Date();
             let OneWeekAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // just for develope temporarily
             // let OneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -89,24 +89,24 @@ export class DataStatusService {
                 delete areas['_id'];
 
                 let responseJSON = areas.area.map(area => {
-                    return area.replace(/_/g," ");
+                    return area.replace(/_/g, " ");
                 });
                 console.log(`responseJSON : ${JSON.stringify(responseJSON)}`)
                 return responseJSON;
             }
-        } catch (e){
+        } catch (e) {
             logger.error(e)
         }
         return null;
     }
 
-    public static async getWeathermap(model:string, area: string, detailType:string, startDateString:string ){
-        area = area.replace(/ /g,"_");
-        detailType = detailType.replace(/ /g,"_");
+    public static async getWeathermap(model: string, area: string, detailType: string, startDateString: string) {
+        area = area.replace(/ /g, "_");
+        detailType = detailType.replace(/ /g, "_");
         let targetDate = new Date(startDateString);
         let targetDataStatus: IDataStatus[] = await DataStatus.find(
-                { fileType: 'IMG', status:"saved",  startDate: { $eq: targetDate }, source: model, area, detailType }
-            ).exec();
+            { fileType: 'IMG', status: "saved", startDate: { $eq: targetDate }, source: model, area, detailType }
+        ).exec();
         return targetDataStatus;
     }
 }

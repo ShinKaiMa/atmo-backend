@@ -6,12 +6,12 @@ let dataStatusController = express.Router();
 
 dataStatusController.post("/api/modelView/schema", (req, res) => {
     logger.debug('get /api/modelView/schema - reqeust body :' + JSON.stringify(req.body));
-    if (!req.body.modelName || !req.body.area) {
+    if (!req.body.model || !req.body.area) {
         res.status(403).send({ Error: 'Invalid Params' });
         return;
     };
 
-    DataStatusService.getModelViewSchemaByAreaAndModelName(req.body.modelName, req.body.area).then(modelViewSchema => {
+    DataStatusService.getModelViewSchemaByAreaAndModelName(req.body.model, req.body.area).then(modelViewSchema => {
         if (!modelViewSchema) {
             res.status(403).send({ Error: 'Can not get model view schema (empty).' });
             return;
