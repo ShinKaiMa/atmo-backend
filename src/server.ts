@@ -32,6 +32,7 @@ app.use(cors({
 }));
 app.use(history());
 //app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/weathermap', express.static('D:\\Python-Workspace'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(helmet());

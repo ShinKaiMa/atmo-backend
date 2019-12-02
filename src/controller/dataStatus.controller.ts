@@ -41,8 +41,8 @@ dataStatusController.post("/api/modelView/area", (req, res) => {
     })
 });
 
-dataStatusController.post("/api/weathermap", (req, res) => {
-    logger.debug('get /api/modelView/area - reqeust body :' + JSON.stringify(req.body));
+dataStatusController.post("/api/modelView/weathermap", (req, res) => {
+    logger.debug('get /api/modelView/weathermap - reqeust body :' + JSON.stringify(req.body));
     if (!req.body.model || !req.body.area || !req.body.detailType || !req.body.startDateString) {
         res.status(403).send({ Error: 'Invalid Params' });
         return;

@@ -27,7 +27,12 @@ export class DataStatusService {
                 let modelViewSchema = result[0];
                 delete modelViewSchema['_id'];
 
-                modelViewSchema.area = area;
+                modelViewSchema.area = area.replace(/_/g, ' ');
+
+                if(modelViewSchema.startDate.length > 1)
+                    modelViewSchema.startDate = modelViewSchema.startDate.sort((previousDate,laterDate)=>{
+                        return new Date(laterDate).getTime() - new Date(previousDate).getTime();
+                    })
 
                 // modelViewSchema.startDate = modelViewSchema.startDate.map(dateString => {
                 //     return dateformat(new Date(dateString), "UTC:yyyy/mm/dd HHMMZ");
@@ -38,8 +43,6 @@ export class DataStatusService {
                     { $match: { fileType: 'IMG', startDate: { $gte: OneWeekAgo, $lte: now }, source: model, area: area } },
                     { $group: { _id: null, dataTypes: { $addToSet: "$dataType" } } }
                 ]);
-                console.log(`dataTypes: ${JSON.stringify(dataTypes)}`);
-                console.log(`dataTypes[0].dataTypes.length: ${JSON.stringify(dataTypes[0].dataTypes.length)}`);
 
 
                 if (dataTypes && dataTypes[0].dataTypes && dataTypes[0].dataTypes.length === this.DATA_TYPE_NUM) {
@@ -49,7 +52,6 @@ export class DataStatusService {
                             { $match: { fileType: 'IMG', startDate: { $gte: OneWeekAgo, $lte: now }, source: model, dataType } },
                             { $group: { _id: null, detailTypes: { $addToSet: "$detailType" } } }
                         ]);
-                        console.log(`detailTypesResult: ${JSON.stringify(detailTypesResult)}`);
                         if (detailTypesResult && detailTypesResult[0].detailTypes) {
                             delete detailTypesResult[0]._id;
                             modelViewSchema.dataTypes = {
@@ -59,7 +61,6 @@ export class DataStatusService {
                                 }
                                 )
                             };
-                            console.log(`modelViewSchema: ${JSON.stringify(modelViewSchema)}`);
                         }
                     }
                     return modelViewSchema;
