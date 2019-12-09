@@ -1,7 +1,9 @@
 import { DataStatus, IDataStatus } from '../models/DataStatus.model';
 import { logger } from '../libs/utils/logger';
+import * as dotenv from 'dotenv';
 import * as dateformat from 'dateformat';
 import * as momet from 'moment';
+dotenv.config();
 
 interface modelViewSchema {
     area: string[],
@@ -102,12 +104,18 @@ export class DataStatusService {
     }
 
     public static async getWeathermap(model: string, area: string, detailType: string, startDateString: string) {
+        console.log(process.env.LOCAL_STATIC_IMG_PATH);
         area = area.replace(/ /g, "_");
         detailType = detailType.replace(/ /g, "_");
         let targetDate = new Date(startDateString);
         let targetDataStatus: IDataStatus[] = await DataStatus.find(
             { fileType: 'IMG', status: "saved", startDate: { $eq: targetDate }, source: model, area, detailType }
         ).exec();
+        if(targetDataStatus){
+            let weathermapArray = targetDataStatus.map(weathermapDataStatus =>{
+                return {url: weathermapDataStatus.path? weathermapDataStatus.path.replace(process.env.LOCAL_STATIC_IMG_PATH,process.env.LOCAL_STATIC_IMG_PATH)}
+            })
+        }
         return targetDataStatus;
     }
 }
