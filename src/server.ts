@@ -11,6 +11,8 @@ import express = require('express');
 import mongoose = require('mongoose');
 import * as cors from 'cors';
 import * as helmet from 'helmet';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 let app = express();
 
@@ -31,8 +33,7 @@ app.use(cors({
     optionsSuccessStatus: 200
 }));
 app.use(history());
-//app.use(express.static(path.join(__dirname, 'dist')));
-app.use('/weathermap', express.static('D:\\Python-Workspace'));
+app.use(config.weathermapRoute, express.static(process.env.LOCAL_STATIC_IMG_PATH));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(helmet());
@@ -40,5 +41,7 @@ app.use(helmet());
 app.use("/", userController);
 app.use("/", dataStatusController);
 app.listen(config.port, () => {
-    logger.info(`running at port ${config.port}, CORS-ORIGIN: ${config.corsOrigin}`);
+    logger.info(`running at port ${config.port}, base URL: ${config.baseURL}`);
+    logger.info(`using  CORS-ORIGIN domain: [${config.corsOrigin}]`);
+    logger.info(`using local static image path: [${process.env.LOCAL_STATIC_IMG_PATH}], route: [${config.baseURL+config.weathermapRoute}]`);
 })

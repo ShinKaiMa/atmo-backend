@@ -18,7 +18,9 @@ let config = {
     'saltRounds': 12,
     'keepLoggedInDay': "7 days",
     corsOrigin,
-    port
+    port,
+    baseURL:`localhost:${port}`,
+    weathermapRoute: "/weathermap"
 };
 
 export { config }

@@ -1,13 +1,30 @@
 import { DataStatus, IDataStatus } from '../models/DataStatus.model';
 import { logger } from '../libs/utils/logger';
 import * as dotenv from 'dotenv';
+import { config } from '../config'
 import * as dateformat from 'dateformat';
 import * as momet from 'moment';
-dotenv.config();
 
 interface modelViewSchema {
     area: string[],
     startDate: string[]
+}
+
+interface weathermapResponse {
+    url: string,
+    fcstHour: Number
+}
+
+enum ModelType {
+    CWB_WRF_3KM
+}
+
+enum ModelTotalFcstHour {
+    CWB_WRF_3KM = 84
+}
+
+enum ModelFcstHourIncrement {
+    CWB_WRF_3KM = 6
 }
 
 export class DataStatusService {
@@ -31,8 +48,8 @@ export class DataStatusService {
 
                 modelViewSchema.area = area.replace(/_/g, ' ');
 
-                if(modelViewSchema.startDate.length > 1)
-                    modelViewSchema.startDate = modelViewSchema.startDate.sort((previousDate,laterDate)=>{
+                if (modelViewSchema.startDate.length > 1)
+                    modelViewSchema.startDate = modelViewSchema.startDate.sort((previousDate, laterDate) => {
                         return new Date(laterDate).getTime() - new Date(previousDate).getTime();
                     })
 
@@ -104,18 +121,56 @@ export class DataStatusService {
     }
 
     public static async getWeathermap(model: string, area: string, detailType: string, startDateString: string) {
-        console.log(process.env.LOCAL_STATIC_IMG_PATH);
-        area = area.replace(/ /g, "_");
-        detailType = detailType.replace(/ /g, "_");
-        let targetDate = new Date(startDateString);
-        let targetDataStatus: IDataStatus[] = await DataStatus.find(
-            { fileType: 'IMG', status: "saved", startDate: { $eq: targetDate }, source: model, area, detailType }
-        ).exec();
-        if(targetDataStatus){
-            let weathermapArray = targetDataStatus.map(weathermapDataStatus =>{
-                return {url: weathermapDataStatus.path? weathermapDataStatus.path.replace(process.env.LOCAL_STATIC_IMG_PATH,process.env.LOCAL_STATIC_IMG_PATH)}
-            })
+        try{
+            area = area.replace(/ /g, "_");
+            detailType = detailType.replace(/ /g, "_");
+            let targetDate = new Date(startDateString);
+            let targetDataStatus: IDataStatus[] = await DataStatus.find(
+                { fileType: 'IMG', status: "saved", startDate: { $eq: targetDate }, source: model, area, detailType }
+            ).exec();
+            if (targetDataStatus && targetDataStatus.length > 0) {
+                let weathermapResponses:weathermapResponse[] = targetDataStatus.map(weathermapDataStatus => {
+                    return {
+                        url: weathermapDataStatus.path ? weathermapDataStatus.path.replace(process.env.REMOTE_STATIC_IMG_PATH, config.baseURL + config.weathermapRoute) : "",
+                        fcstHour: weathermapDataStatus.forcastHour
+                    }
+                })
+                weathermapResponses.sort((before, after)=>{
+                    return +before.fcstHour-+after.fcstHour;
+                });
+                DataStatusService.extractMissingFcstHourFromWeathermapResponse(weathermapResponses);
+                return weathermapResponses;
+            } else {
+                return null;
+            }
+        } catch(e){
+            logger.error(e);
+            return null;
         }
-        return targetDataStatus;
+    }
+
+    private static extractMissingFcstHourFromWeathermapResponse(weathermapResponses:weathermapResponse[]){
+        if(weathermapResponses.length > 0){
+            let modelName = DataStatusService.guessModelNameByURL(weathermapResponses[0].url);
+            let totalFcstHour:number = ModelTotalFcstHour[modelName];
+            let fcstHourIncrement:number = ModelFcstHourIncrement[modelName];
+            console.log(`totalFcstHour: ${totalFcstHour} , fcstHourIncrement ${fcstHourIncrement}`);
+            /**
+             * TODO extract impl
+             */
+        } else {
+            return null;
+        }
+        
+    }
+
+    private static guessModelNameByURL(url:string):string{
+        if(url){
+            if(url.includes('CWB')){
+                return ModelType[ModelType.CWB_WRF_3KM];
+            } else {
+                return ModelType[ModelType.CWB_WRF_3KM];
+            }
+        }
     }
 }

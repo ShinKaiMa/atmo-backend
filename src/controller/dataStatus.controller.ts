@@ -1,6 +1,7 @@
 import express = require("express");
 import { logger } from '../libs/utils/logger';
 import { DataStatusService } from '../service/dataStatus.service';
+import { config } from '../config'
 
 let dataStatusController = express.Router();
 
@@ -41,7 +42,7 @@ dataStatusController.post("/api/modelView/area", (req, res) => {
     })
 });
 
-dataStatusController.post("/api/modelView/weathermap", (req, res) => {
+dataStatusController.post('/api/modelView/weathermap', (req, res) => {
     logger.debug('get /api/modelView/weathermap - reqeust body :' + JSON.stringify(req.body));
     if (!req.body.model || !req.body.area || !req.body.detailType || !req.body.startDateString) {
         res.status(403).send({ Error: 'Invalid Params' });
