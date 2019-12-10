@@ -76,7 +76,7 @@ export class DataStatusService {
                     for (let dataType of dataTypes[0].dataTypes) {
                         //distinct detailTypes (surface wind, 850hPa temp... etc.) by dataType.
                         let detailTypesResult = await DataStatus.aggregate([
-                            { $match: { fileType: 'IMG', startDate: { $gte: OneWeekAgo, $lte: now }, source: model, dataType } },
+                            { $match: { fileType: 'IMG', startDate: { $gte: OneWeekAgo, $lte: now }, source: model, dataType, area } },
                             { $group: { _id: null, detailTypes: { $addToSet: "$detailType" } } }
                         ]);
                         if (detailTypesResult && detailTypesResult[0].detailTypes) {
