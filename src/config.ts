@@ -19,7 +19,7 @@ let config = {
     'keepLoggedInDay': "7 days",
     corsOrigin,
     port,
-    baseURL:`localhost:${port}`,
+    baseURL:`http://localhost:${port}`,
     weathermapRoute: "/weathermap"
 };
 

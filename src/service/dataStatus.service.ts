@@ -11,8 +11,16 @@ interface modelViewSchema {
 }
 
 interface weathermapResponse {
+    weathermapsInfo?: weathermapInfo[],
+    missingFcstHour?: Number[],
+    availableFcstHour?: Number[],
+    fcstHourIncrement?: number,
+    totalFcstHour?: number
+}
+
+interface weathermapInfo {
     url: string,
-    fcstHour: Number
+    fcstHour: Number,
 }
 
 enum ModelType {
@@ -121,7 +129,7 @@ export class DataStatusService {
     }
 
     public static async getWeathermap(model: string, area: string, detailType: string, startDateString: string) {
-        try{
+        try {
             area = area.replace(/ /g, "_");
             detailType = detailType.replace(/ /g, "_");
             let targetDate = new Date(startDateString);
@@ -129,44 +137,72 @@ export class DataStatusService {
                 { fileType: 'IMG', status: "saved", startDate: { $eq: targetDate }, source: model, area, detailType }
             ).exec();
             if (targetDataStatus && targetDataStatus.length > 0) {
-                let weathermapResponses:weathermapResponse[] = targetDataStatus.map(weathermapDataStatus => {
+                let weathermapsInfo: weathermapInfo[] = targetDataStatus.map(weathermapDataStatus => {
                     return {
                         url: weathermapDataStatus.path ? weathermapDataStatus.path.replace(process.env.REMOTE_STATIC_IMG_PATH, config.baseURL + config.weathermapRoute) : "",
                         fcstHour: weathermapDataStatus.forcastHour
                     }
                 })
-                weathermapResponses.sort((before, after)=>{
-                    return +before.fcstHour-+after.fcstHour;
+                weathermapsInfo.sort((before, after) => {
+                    return +before.fcstHour - +after.fcstHour;
                 });
-                DataStatusService.extractMissingFcstHourFromWeathermapResponse(weathermapResponses);
-                return weathermapResponses;
+                let weathermapResponse:weathermapResponse;
+                weathermapResponse = {...weathermapResponse, weathermapsInfo};
+                let missingFcstHour = DataStatusService.extractMissingFcstHourFromWeathermapResponse(weathermapsInfo);
+
+                if(missingFcstHour){
+                    weathermapResponse.missingFcstHour = missingFcstHour;
+                    weathermapResponse.availableFcstHour = weathermapsInfo.map(weathermapInfo => {
+                        return weathermapInfo.fcstHour;
+                    })
+
+                    let modelName = DataStatusService.guessModelNameByURL(weathermapsInfo[0].url);
+                    let totalFcstHour: number = ModelTotalFcstHour[modelName];
+                    let fcstHourIncrement: number = ModelFcstHourIncrement[modelName];
+
+                    weathermapResponse = {...weathermapResponse, totalFcstHour, fcstHourIncrement};
+                    return weathermapResponse;
+                }
             } else {
-                return null;
+                return {availableFcstHour:[]};
             }
-        } catch(e){
+        } catch (e) {
             logger.error(e);
-            return null;
+            return {availableFcstHour:[], error:"Server internal error."};
         }
     }
 
-    private static extractMissingFcstHourFromWeathermapResponse(weathermapResponses:weathermapResponse[]){
-        if(weathermapResponses.length > 0){
-            let modelName = DataStatusService.guessModelNameByURL(weathermapResponses[0].url);
-            let totalFcstHour:number = ModelTotalFcstHour[modelName];
-            let fcstHourIncrement:number = ModelFcstHourIncrement[modelName];
-            console.log(`totalFcstHour: ${totalFcstHour} , fcstHourIncrement ${fcstHourIncrement}`);
-            /**
-             * TODO extract impl
-             */
+
+    private static extractMissingFcstHourFromWeathermapResponse(weathermapsInfo: weathermapInfo[]) {
+        if (weathermapsInfo.length > 0) {
+            // Get model fcst info
+            let modelName = DataStatusService.guessModelNameByURL(weathermapsInfo[0].url);
+            let totalFcstHour: number = ModelTotalFcstHour[modelName];
+            let fcstHourIncrement: number = ModelFcstHourIncrement[modelName];
+
+            // Get available fcst hour
+            let availableFcstHours: Number[] = weathermapsInfo.map(weathermapInfo => {
+                return weathermapInfo.fcstHour;
+            })
+
+            // Get complete fcst hour
+            let completeFcstHours: Number[] = [];
+            for (let fcstHour = 0; fcstHour < totalFcstHour; fcstHour = fcstHour + fcstHourIncrement) {
+                completeFcstHours.push(fcstHour);
+            }
+
+            //Diff fcst hour
+            let missingFcstHour = completeFcstHours.filter(x => !availableFcstHours.includes(x));
+            return missingFcstHour;
         } else {
             return null;
         }
-        
+
     }
 
-    private static guessModelNameByURL(url:string):string{
-        if(url){
-            if(url.includes('CWB')){
+    private static guessModelNameByURL(url: string): string {
+        if (url) {
+            if (url.includes('CWB')) {
                 return ModelType[ModelType.CWB_WRF_3KM];
             } else {
                 return ModelType[ModelType.CWB_WRF_3KM];
