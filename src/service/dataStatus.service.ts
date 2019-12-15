@@ -183,11 +183,11 @@ export class DataStatusService {
             // Get available fcst hour
             let availableFcstHours: Number[] = weathermapsInfo.map(weathermapInfo => {
                 return weathermapInfo.fcstHour;
-            })
+            });
 
             // Get complete fcst hour
             let completeFcstHours: Number[] = [];
-            for (let fcstHour = 0; fcstHour < totalFcstHour; fcstHour = fcstHour + fcstHourIncrement) {
+            for (let fcstHour = 0; fcstHour <= totalFcstHour; fcstHour = fcstHour + fcstHourIncrement) {
                 completeFcstHours.push(fcstHour);
             }
 
