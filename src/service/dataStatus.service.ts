@@ -15,7 +15,8 @@ interface weathermapResponse {
     missingFcstHour?: Number[],
     availableFcstHour?: Number[],
     fcstHourIncrement?: number,
-    totalFcstHour?: number
+    totalFcstHour?: number,
+    iniFcstHour?: number
 }
 
 interface weathermapInfo {
@@ -149,6 +150,9 @@ export class DataStatusService {
                 let weathermapResponse:weathermapResponse;
                 weathermapResponse = {...weathermapResponse, weathermapsInfo};
                 let missingFcstHour = DataStatusService.extractMissingFcstHourFromWeathermapResponse(weathermapsInfo);
+                if(detailType.includes('Precip')){
+                    missingFcstHour = missingFcstHour.filter((missinghour) => missinghour !== 84); // hard code
+                }
 
                 if(missingFcstHour){
                     weathermapResponse.missingFcstHour = missingFcstHour;
@@ -157,10 +161,15 @@ export class DataStatusService {
                     })
 
                     let modelName = DataStatusService.guessModelNameByURL(weathermapsInfo[0].url);
-                    let totalFcstHour: number = ModelTotalFcstHour[modelName];
+                    let totalFcstHour: number = detailType.includes('Precip')? 78 : ModelTotalFcstHour[modelName]; // hard code here first
                     let fcstHourIncrement: number = ModelFcstHourIncrement[modelName];
+                    let iniFcstHour: number  = detailType.includes('Precip')? 6 : 0; // hard code here first
 
-                    weathermapResponse = {...weathermapResponse, totalFcstHour, fcstHourIncrement};
+                    if(weathermapResponse.missingFcstHour.length > 0 && weathermapResponse.missingFcstHour[0] < iniFcstHour){
+                        weathermapResponse.missingFcstHour.shift();
+                    }
+
+                    weathermapResponse = {...weathermapResponse, totalFcstHour, fcstHourIncrement, iniFcstHour};
                     return weathermapResponse;
                 }
             } else {
