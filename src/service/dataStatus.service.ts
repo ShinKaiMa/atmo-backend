@@ -161,7 +161,7 @@ export class DataStatusService {
                     })
 
                     let modelName = DataStatusService.guessModelNameByURL(weathermapsInfo[0].url);
-                    let totalFcstHour: number = detailType.includes('Precip')? 78 : ModelTotalFcstHour[modelName]; // hard code here first
+                    let totalFcstHour: number = detailType.includes('Precip')? 84 : ModelTotalFcstHour[modelName]; // hard code here first
                     let fcstHourIncrement: number = ModelFcstHourIncrement[modelName];
                     let iniFcstHour: number  = detailType.includes('Precip')? 6 : 0; // hard code here first
 
