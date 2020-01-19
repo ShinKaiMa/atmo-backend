@@ -7,6 +7,8 @@ export interface IDataStatus extends Document {
   dataType:string;
   detailType:string;
   path: string;
+  width:Number;
+  height:Number;
   status:string;
   byte:number;
   startDate:Date;
@@ -23,6 +25,8 @@ let DataStatusSchema: Schema = new Schema({
   dataType:{ type: String, required: true , index: true}, //Precipitation,Wind,Temperature
   detailType:{ type: String , index: true}, // 850hPa Wind & Precip
   path: { type: String, required: true , index: true},
+  width:{ type: Number, required: false , index: true},
+  height:{ type: Number, required: false , index: true},
   status: {type: String, required: true , index: true},
   byte: {type: Number, required: true , index: true},
   startDate: {type: Date, required: true , index: true},

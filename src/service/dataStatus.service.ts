@@ -16,7 +16,10 @@ interface weathermapResponse {
     availableFcstHour?: Number[],
     fcstHourIncrement?: number,
     totalFcstHour?: number,
-    iniFcstHour?: number
+    iniFcstHour?: number,
+    width?: number,
+    height?: number,
+    imageDimensions?:Object
 }
 
 interface weathermapInfo {
@@ -149,10 +152,11 @@ export class DataStatusService {
                 });
                 let weathermapResponse:weathermapResponse;
                 weathermapResponse = {...weathermapResponse, weathermapsInfo};
+                weathermapResponse = {...weathermapResponse, imageDimensions:{width:targetDataStatus[0].width, height:targetDataStatus[0].height} }
                 let missingFcstHour = DataStatusService.extractMissingFcstHourFromWeathermapResponse(weathermapsInfo);
-                if(detailType.includes('Precip')){
-                    missingFcstHour = missingFcstHour.filter((missinghour) => missinghour !== 84); // hard code
-                }
+                // if(detailType.includes('Precip')){
+                //     missingFcstHour = missingFcstHour.filter((missinghour) => missinghour !== 84); // hard code
+                // }
 
                 if(missingFcstHour){
                     weathermapResponse.missingFcstHour = missingFcstHour;
