@@ -40,8 +40,10 @@ app.use(helmet());
 
 app.use("/", userController);
 app.use("/", dataStatusController);
-app.listen(config.port, () => {
+let server = app.listen(config.port, () => {
     logger.info(`running at port ${config.port}, base URL: ${config.baseURL}`);
     logger.info(`using  CORS-ORIGIN domain: [${config.corsOrigin}]`);
     logger.info(`using local static image path: [${process.env.LOCAL_STATIC_IMG_PATH}], route: [${config.baseURL+config.weathermapRoute}]`);
 })
+
+export {app, server};
