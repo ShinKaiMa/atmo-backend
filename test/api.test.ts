@@ -12,7 +12,19 @@ const sleep = (millsecond) => {
     })
 }
 
-describe('API testing', async () => {
+describe('Weathermap API testing', async () => {
+    it('should POST /api/modelView/area', async () => {
+        const res = await request(app)
+            .post('/api/modelView/area').send({ model: "CWB WRF 3KM" });
+        expect(res.status).to.equal(200);
+    });
+
+    it('should POST /api/modelView/schema', async () => {
+        const res = await request(app)
+            .post('/api/modelView/schema').send({ model: "CWB WRF 3KM", area:"TW" });
+        expect(res.status).to.equal(200);
+    });
+
     it('should POST /api/modelView/weathermap', async () => {
         const res = await request(app)
             .post('/api/modelView/weathermap').send({ model: "CWB WRF 3KM", area: "TW", detailType: "Surface Wind and Precip", startDateString: "2020-01-28T18:00:00.000Z" });
