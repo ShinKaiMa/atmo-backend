@@ -39,6 +39,6 @@
   },
   "scripts": {
     "start": "tsc && node ./dist/src/server.js",
-    "test": "mocha --require ts-node/register test/*.ts --timeout 20000"
+    "test": "mocha --require ts-node/register --require mocha-steps test/*.ts --timeout 20000"
   }
 }
