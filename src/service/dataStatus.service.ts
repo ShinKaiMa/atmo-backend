@@ -107,8 +107,8 @@ export class DataStatusService {
     public static async getAreaByModel(model: string) {
         try {
             let now = new Date();
-            let OneWeekAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // just for develope temporarily
-            // let OneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            // let OneWeekAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // just for develope temporarily
+            let OneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
             //distinct startDate by model name and area
             let result: any[] = await DataStatus.aggregate([

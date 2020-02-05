@@ -16,7 +16,7 @@ log4js.configure({
         }
     },
     categories: {
-        default: { appenders: ['consoleAppenders', 'fileAppenders'], level: 'debug' }
+        default: { appenders: ['consoleAppenders', 'fileAppenders'], level: 'info' }
     }
 });
 const logger = log4js.getLogger('ATMO');

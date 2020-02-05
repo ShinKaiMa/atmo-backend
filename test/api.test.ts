@@ -5,7 +5,8 @@ import mongoose = require('mongoose');
 import { connectToMongoDB } from '../src/libs/utils/initMongoDBConnection';
 import { step } from 'mocha-steps';
 import { logger } from '../src/libs/utils/logger';
-import modelViewSchemaRequest from './requestSchema/modelViewAchemaRequest'
+import modelViewSchemaRequest from './requestSchema/modelViewSchemaRequest'
+import modelViewWeathermapRequest from './requestSchema/modelViewWeathermapRequest'
 
 before(async () => {
     await connectToMongoDB();
@@ -14,7 +15,8 @@ before(async () => {
 describe('weathermap API BDD test',
     async () => {
         let models = ['CWB WRF 3KM'];
-        let allSchemaRequest: modelViewSchemaRequest[] = []; // make requests for next step (schema API)
+        // make requests for next step (schema API)
+        let allSchemaRequest: modelViewSchemaRequest[] = [];
         step('1. should POST /api/modelView/area for all input {model}', async () => {
             for (let idx = 0; idx < models.length; idx++) {
                 let areasResponse = await request(app)
@@ -32,26 +34,50 @@ describe('weathermap API BDD test',
             }
         });
 
-        //TODO: make request for weathermap API
+        // make requests for weathermap API
+        let allWeathermapRequest: modelViewWeathermapRequest[] = [];
         step('2. should POST /api/modelView/schema for all input {model} and each {area}',
             async () => {
                 logger.info(`allSchemaRequest: ${JSON.stringify(allSchemaRequest)}`)
                 for (let idx = 0; idx < allSchemaRequest.length; idx++) {
                     let res = await request(app)
-                        .post('/api/modelView/schema').send({ ...allSchemaRequest[idx] });
+                        .post('/api/modelView/schema').send(allSchemaRequest[idx]);
                     expect(res.status).to.equal(200);
-                    expect(res.body.startDate).to.not.be.empty;
-                    expect(res.body.startDate).to.be.an('array');
-                    let dataTypes = res.body.dataTypes;
-                    expect(Object.keys(dataTypes)).to.have.lengthOf(3); // match front-end model view bottom navbar
-                }
 
+                    let allStartDate: string[] = res.body.startDate;
+                    //ensure at least one date can be selected
+                    expect(allStartDate).to.not.be.empty;
+                    expect(allStartDate).to.be.an('array');
+
+                    let allDataTypes = res.body.dataTypes;
+                    // match front-end model view bottom navbar
+                    expect(Object.keys(allDataTypes)).to.have.lengthOf(3);
+                    Object.keys(allDataTypes).forEach(eachDataType => {
+                        let detailTypes: string[] = allDataTypes[eachDataType]
+                        expect(detailTypes).to.not.be.empty; // ensure at least one detail type in each dataType(bottom navbar buttom)
+                        expect(detailTypes).to.be.an('array');
+                        detailTypes.forEach(detailType => {
+                            allStartDate.forEach(startDate => {
+                                let weathermapRequest = new modelViewWeathermapRequest();
+                                weathermapRequest.model = allSchemaRequest[idx].model
+                                weathermapRequest.area = allSchemaRequest[idx].area
+                                weathermapRequest.detailType = detailType;
+                                weathermapRequest.startDateString = startDate;
+                                allWeathermapRequest.push(weathermapRequest);
+                            })
+                        })
+                    })
+                }
+                logger.info(`allWeathermapRequest length: ${allWeathermapRequest.length} `)
             });
 
         step('3. should POST /api/modelView/weathermap', async () => {
-            let res = await request(app)
-                .post('/api/modelView/weathermap').send({ model: "CWB WRF 3KM", area: "TW", detailType: "Surface Wind and Precip", startDateString: "2020-01-28T18:00:00.000Z" });
-            expect(res.status).to.equal(200);
+            for (let idx = 0; idx < allWeathermapRequest.length; idx++) {
+                let res = await request(app)
+                    .post('/api/modelView/weathermap').send(allWeathermapRequest[idx]);
+                expect(res.status).to.equal(200);
+                expect(res.body.availableFcstHour).to.be.an('array');
+            }
         });
     }
 );
